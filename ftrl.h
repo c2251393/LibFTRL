@@ -19,7 +19,8 @@ typedef double FtrlFloat;
 typedef long FtrlInt;
 typedef long long FtrlLong;
 
-FtrlLong const chunk_size = 3000000000;
+FtrlLong const chunk_size = 30000000;
+FtrlFloat const EPS = 1e-7;
 
 class Node {
 public:
@@ -35,7 +36,9 @@ public:
     FtrlFloat l1, l2, alpha, beta;
     FtrlInt nr_pass, nr_threads;
     bool normalized;
-    Parameter():l1(0.1), l2(0.1), alpha(0.1), beta(1), normalized(false) {};
+    Parameter(): l1(0.1), l2(0.1), alpha(0.1), beta(1),
+                 nr_pass(1), nr_threads(1),
+                 normalized(false) {}
 };
 
 class FtrlChunk {

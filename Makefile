@@ -13,7 +13,7 @@ train: train.cpp ftrl.o
 predict: predict.cpp ftrl.o
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-ffm.o: ftrl.cpp ftrl.h
+ftrl.o: ftrl.cpp ftrl.h
 	$(CXX) $(CXXFLAGS) $(DFLAG) -c -o $@ $<
 
 clean:

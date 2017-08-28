@@ -12,6 +12,7 @@ struct Option
     shared_ptr<Parameter> param;
     FtrlInt verbose, solver;
     string data_path, test_path;
+    Option(): param(make_shared<Parameter>()), verbose(1), solver(1) {}
 };
 
 string basename(string path)
@@ -46,11 +47,11 @@ string train_help()
 	"	 0 -- AdaGrad framework\n"
 	"	 1 -- FTRL framework\n"
 	"	 2 -- RDA framework\n"
-    "-a <alpha>: set initial learning rate\n"
-    "-b <beta>: set shrinking base for learning rate schedule\n"
+    "-a <alpha>: set initial learning rate (default 0.1)\n"
+    "-b <beta>: set shrinking base for learning rate schedule (default 1)\n"
     "-l1 <lambda_1>: set regularization coefficient on l1 regularizer (default 0.1)\n"
     "-l2 <lambda_2>: set regularization coefficient on l2 regularizer (default 0.1)\n"
-    "-t <iter>: set number of iterations (default 20)\n"
+    "-t <iter>: set number of iterations (default 1)\n"
     "-p <path>: set path to test set\n"
     "-c <threads>: set number of cores\n"
     "--norm: Apply instance-wise normlization."
@@ -67,8 +68,7 @@ Option parse_option(int argc, char **argv)
         throw invalid_argument(train_help());
 
     Option option;
-    option.verbose = 1;
-    option.param = make_shared<Parameter>();
+
     int i = 0;
     for(i = 1; i < argc; i++)
     {

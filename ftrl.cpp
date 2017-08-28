@@ -195,6 +195,8 @@ void FtrlProblem::print_header_info() {
     }
     cout.width(13);
     cout << "time";
+    cout.width(13);
+    cout << "nnz in w";
     cout << endl;
 }
 void FtrlProblem::print_epoch_info() {
@@ -216,6 +218,13 @@ void FtrlProblem::print_epoch_info() {
     }
     cout.width(13);
     cout << fixed << setprecision(5) << omp_get_wtime() - start_time;
+    cout.width(13);
+    FtrlInt nnz = 0;
+    for (FtrlInt i = 0; i < data->n; ++i)
+      if (fabs(w[i]) > EPS) {
+        nnz++;
+      }
+    cout << fixed << nnz;
     cout << endl;
 } 
 
@@ -466,8 +475,10 @@ void FtrlProblem::fun() {
 
 void FtrlProblem::solve() {
     print_header_info();
+    data->print_data_info();
     FtrlInt nr_chunk = data->nr_chunk;
     FtrlFloat l1 = param->l1, l2 = param->l2, a = param->alpha, b = param->beta;
+    cout << param->nr_pass << endl;
     for (t = 0; t < param->nr_pass; t++) {
     for (FtrlInt chunk_id = 0; chunk_id < nr_chunk; chunk_id++) {
 
@@ -518,6 +529,7 @@ void FtrlProblem::solve() {
         chunk.clear();
     }
     fun();
+    cerr << "DONE" << endl;
     if (!test_data->file_name.empty()) {
     validate();
     }
