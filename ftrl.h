@@ -26,9 +26,11 @@ class Node {
 public:
     FtrlLong idx;
     FtrlFloat  val;
-    Node(){};
-    Node(FtrlLong idx, FtrlFloat val): idx(idx), val(val){};
+    Node(){}
+    Node(FtrlLong idx, FtrlFloat val): idx(idx), val(val){}
 };
+
+enum {ADAGRAD, FTRL, RDA}; // solver type
 
 class Parameter {
 
@@ -44,8 +46,8 @@ public:
 class FtrlChunk {
 public:
     FtrlLong l, nnz;
-    FtrlInt chunk_id;
-    string file_name;
+    //FtrlInt chunk_id;
+    //string file_name;
 
     vector<Node> nodes;
     vector<FtrlInt> nnzs;
@@ -53,24 +55,30 @@ public:
     vector<FtrlFloat> R;
 
 
-    void read();
-    void write();
+    //void read();
+    //void write();
     void clear();
 
-    FtrlChunk(string data_name, FtrlInt chunk_id);
+    FtrlChunk() {};
+    //FtrlChunk(string data_name, FtrlInt chunk_id);
 };
 
 class FtrlData {
 public:
     string file_name;
     FtrlLong l, n;
-    FtrlInt nr_chunk;
+    ifstream fin;
+    //FtrlInt nr_chunk;
 
-    vector<FtrlChunk> chunks;
+    //vector<FtrlChunk> chunks;
+    FtrlChunk cur_chunk;
 
-    FtrlData(string file_name): file_name(file_name), l(0), n(0), nr_chunk(0) {};
+    FtrlData(string file_name): file_name(file_name), l(0), n(0), fin(file_name) {};
+    //FtrlData(string file_name): file_name(file_name), l(0), n(0), nr_chunk(0) {};
     void print_data_info();
-    void split_chunks();
+    void rewind();
+    FtrlChunk& get_next_chunk();
+    //void split_chunks();
 };
 
 class FtrlProblem {
@@ -79,7 +87,9 @@ public:
     shared_ptr<FtrlData> test_data;
     shared_ptr<Parameter> param;
     FtrlProblem() {};
-    FtrlProblem(shared_ptr<FtrlData> &data, shared_ptr<FtrlData> &test_data, shared_ptr<Parameter> &param)
+    FtrlProblem(shared_ptr<FtrlData> &data,
+                shared_ptr<FtrlData> &test_data,
+                shared_ptr<Parameter> &param)
         :data(data), test_data(test_data), param(param) {};
 
 
@@ -89,13 +99,17 @@ public:
     FtrlFloat start_time;
 
     void initialize();
+
     void solve();
     void solve_adagrad();
     void solve_rda();
+
     void print_epoch_info();
     void print_header_info();
+
     void save_model(string model_path);
     FtrlLong load_model(string model_path);
+
     void fun();
     void validate();
 };
